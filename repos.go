@@ -9,6 +9,11 @@ import (
 
 const baseURL = "https://api.github.com"
 
+// Clienter ..
+type Clienter interface {
+	RepoCount(string) (int, error)
+}
+
 // GithubClient is a http.Client that will provide options specific to Github API requests.
 type GithubClient struct {
 	hc *http.Client
