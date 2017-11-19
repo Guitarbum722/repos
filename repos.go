@@ -4,7 +4,9 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
+	"fmt"
 	"net/http"
+	"time"
 )
 
 const baseURL = "https://api.github.com"
@@ -27,8 +29,13 @@ type UserResponse struct {
 // RepoCount makes a GET request to the Github '/users' API and
 // returns the number of public repositories that the specified User owns.
 // If an error occurs, the error will be returned with a repo count of -1
-func RepoCount(username string) (int, error) {
-	client := &GithubClient{}
+func (gc *GithubClient) RepoCount(username string) (int, error) {
+	client := &GithubClient{
+		hc: &http.Client{
+			Timeout: time.Duration(time.Second * 20),
+		},
+	}
+
 	uri := "/users/" + username
 
 	var user UserResponse
@@ -44,6 +51,7 @@ func (gc *GithubClient) call(method, uri string, data *bytes.Buffer, result inte
 	var err error
 
 	endpoint := baseURL + uri
+	fmt.Println("endpoint :", endpoint)
 
 	switch method {
 	case http.MethodGet:
