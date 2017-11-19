@@ -1,2 +1,2 @@
-# echo-ip
-Sends a request to httpbin.org and returns the caller's IP address.
+# repo-count
+Sends a request to the github `Users` API and returns the public repository count for the specified user.
