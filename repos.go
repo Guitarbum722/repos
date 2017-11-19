@@ -4,7 +4,6 @@ import (
 	"bytes"
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 	"time"
 )
@@ -45,14 +44,7 @@ func RepoCount(username string) (int, error) {
 		},
 	}
 
-	uri := "/users/" + username
-
-	var user UserResponse
-	if err := gc.call(http.MethodGet, uri, nil, &user); err != nil {
-		return -1, err
-	}
-
-	return user.PublicRepos, nil
+	return gc.RepoCount(username)
 }
 
 // RepoCount makes a GET request to the Github '/users' API and
@@ -74,7 +66,6 @@ func (gc *GithubClient) call(method, uri string, data *bytes.Buffer, result inte
 	var err error
 
 	endpoint := baseURL + uri
-	fmt.Println("endpoint :", endpoint)
 
 	switch method {
 	case http.MethodGet:
