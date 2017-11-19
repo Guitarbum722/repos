@@ -38,8 +38,27 @@ func NewGithubClient() Clienter {
 // RepoCount makes a GET request to the Github '/users' API and
 // returns the number of public repositories that the specified User owns.
 // If an error occurs, the error will be returned with a repo count of -1
-func (gc *GithubClient) RepoCount(username string) (int, error) {
+func RepoCount(username string) (int, error) {
+	gc := &GithubClient{
+		hc: &http.Client{
+			Timeout: time.Duration(time.Second * 20),
+		},
+	}
 
+	uri := "/users/" + username
+
+	var user UserResponse
+	if err := gc.call(http.MethodGet, uri, nil, &user); err != nil {
+		return -1, err
+	}
+
+	return user.PublicRepos, nil
+}
+
+// RepoCount makes a GET request to the Github '/users' API and
+// returns the number of public repositories that the specified User owns.
+// If an error occurs, the error will be returned with a repo count of -1
+func (gc *GithubClient) RepoCount(username string) (int, error) {
 	uri := "/users/" + username
 
 	var user UserResponse
