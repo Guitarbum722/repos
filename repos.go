@@ -26,20 +26,24 @@ type UserResponse struct {
 	PublicRepos int `json:"public_repos"`
 }
 
-// RepoCount makes a GET request to the Github '/users' API and
-// returns the number of public repositories that the specified User owns.
-// If an error occurs, the error will be returned with a repo count of -1
-func (gc *GithubClient) RepoCount(username string) (int, error) {
-	client := &GithubClient{
+// NewGithubClient returns a pointer to a GithubClient
+func NewGithubClient() Clienter {
+	return &GithubClient{
 		hc: &http.Client{
 			Timeout: time.Duration(time.Second * 20),
 		},
 	}
+}
+
+// RepoCount makes a GET request to the Github '/users' API and
+// returns the number of public repositories that the specified User owns.
+// If an error occurs, the error will be returned with a repo count of -1
+func (gc *GithubClient) RepoCount(username string) (int, error) {
 
 	uri := "/users/" + username
 
 	var user UserResponse
-	if err := client.call(http.MethodGet, uri, nil, &user); err != nil {
+	if err := gc.call(http.MethodGet, uri, nil, &user); err != nil {
 		return -1, err
 	}
 
